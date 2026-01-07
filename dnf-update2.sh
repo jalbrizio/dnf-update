@@ -14,7 +14,7 @@
 
 # This is where we call yum to update the server
 #
-yum -y update --nogpg --skip-broken > /var/log/yum-update.log
+dnf -y update --nogpg --skip-broken > /var/log/dnf-update.log
 
 # now we Give it 30 seconds just in case 
 # before emailing everyone the update status.
@@ -23,23 +23,23 @@ sleep 30
 
 # Email everyone ## email are seperated by comas with no spaces##
 #
-cat /var/log/yum-update.log | mail -s "yum update log for `date`" exampleemail@yourserver.com,exampleemail@yourserver.com,exampleemail@yourserver.com,exampleemail@yourserver.com
+cat /var/log/dnf-update.log | mail -s "dnf update log for `date`" exampleemail@yourserver.com,exampleemail@yourserver.com,exampleemail@yourserver.com,exampleemail@yourserver.com
 
 # Make sure iptables is running and will start at boot then reboot the server 
 # Yes, I chose reboot instead of shutdown -r 0
 # 
 
-chkconfig iptables on
-service iptables restart
+systemctl enable firewalld
+systemctl restart firewalld
 
-service mysql start --wsrep-cluster-address=gcomm://
+systemctl start mysql --wsrep-cluster-address=gcomm://
 mysql_upgrade -u root -pexamplePass --force
-cd /usr/local/src/vmware-tools/galera
-semodule -i /usr/local/src/vmware-tools/galera/galera.pp
+cd /usr/local/src/dnf-update/galera
+semodule -i /usr/local/src/dnf-update/galera/galera.pp
 
-service mysql stop
+systemctl stop mysql
 killall -9 mysqld
-service mysql start
+systemctl start mysql
 
 reboot
 
