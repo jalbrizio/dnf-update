@@ -1,5 +1,5 @@
-
-
+#/bin/bash
+# register.sh file to register to rh satellite
 
 
 #HOSTNAME
