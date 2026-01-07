@@ -13,11 +13,11 @@ if [ -n "$WEEKDAY1" ]
         if [ "$DAY" -gt "8" -a "$DAY" -lt "14" ]
          then
 # Pull the latest update script before running updates
-          cd /usr/local/src/vmware-tools
+          cd /usr/local/src/dnf-update
           git fetch
           git reset --hard origin/master
 #run the update script
-          /usr/local/src/vmware-tools/yum-update2.sh
+          /usr/local/src/dnf-update/yum-update2.sh
         else
           echo "not running today"
           exit
@@ -29,11 +29,11 @@ then
         if [ "$DAY" -gt "11" -a "$DAY" -lt "17" ]
          then
 # Pull the latest update script before running updates
-          cd /usr/local/src/vmware-tools
+          cd /usr/local/src/dnf-update
           git fetch
           git reset --hard origin/master
 #run the update script
-          /usr/local/src/vmware-tools/yum-update2.sh
+          /usr/local/src/dnf-update/yum-update2.sh
         else
           echo "not running today"
           exit
@@ -41,4 +41,4 @@ then
 else
         echo "not running today"
 fi
-yum clean all
+dnf clean all
