@@ -8,9 +8,6 @@
 # This is where we make sure it only runs on the second sunday 
 # since cron can only be scheduled to run every sunday.
 #
-#!/bin/bash
-
-
 
 # This is where we call yum to update the server
 #
