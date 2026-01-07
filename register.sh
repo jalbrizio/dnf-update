@@ -1,3 +1,75 @@
+
+
+
+
+#HOSTNAME
+if [[ -z "$1" ]]; then
+read -p "Enter the hostname: " HOSTNAME1
+else 
+HOSTNAME1=$1
+echo "The hostname is $HOSTNAME1 ."
+fi
+#DOMAIN
+if [[ -z "$2" ]]; then 
+read -p "Enter the doamin: " DOMAIN1
+else 
+DOMAIN1=$2
+echo "the domain is $DOMAIN1 ."
+fi
+#HOSTNAME
+echo "Setting the hostname to $HOSTNAME1.$DOMAIN1"
+hostnamectl set-hostname $HOSTNAME1.$DOMAIN1
+
+#SSHKEYS
+if [[ -z "$3" ]]; then 
+read -p "do you want to update the ssh keys? Y/N: " NEWSSH
+else 
+NEWSSH=$3
+fi
+NEWSSH=$(echo "$NEWSSH" | tr '[:upper:]' '[:lower:]')
+if [[ "$NEWSSH" == "yes" ]] || [[ "$NEWSSH" == "y" ]]; then
+echo "You chose to regenerate the servers ssh keys"
+# remove the /etc/ssh/ssh_host_* files and restart the sshd server. This generated new sshd keys for the host so it doesn't use the keys from the image.
+echo "Generating new ssh host keys."
+alias rm=rm
+rm /etc/ssh/ssh_host_*
+systemctl restart sshd
+else
+echo "You chose NOT to regenerate the servers ssh keys"
+fi
+#REJOINTSAT
+if [[ -z "$4" ]]; then 
+read -p "do you want to rejoin to sattelite? Y/N: " NEWSAT
+else 
+NEWSAT=$4
+fi
+NEWSAT=$(echo "$NEWSAT" | tr '[:upper:]' '[:lower:]')
+if [[ "$NEWSAT" == "yes" ]] || [[ "$NEWSAT" == "y" ]]; then
+echo "You chose to rejoin to the satellite server"
+# Generate a new UUID
+echo "Updating the IUUID for satellite."
+NEWUUID=`uuidgen`
+# Use the new UUID with subscription-manager
+echo '\{\"dmi.system.uuid\": $NEWUUID}' > /etc/rhsm/facts/uuid_override.facts
+# Validate that the new UUIS is being used
+subscription-manager facts | grep dmi.system.uuid
+echo "Joining to the satellite server with the new UUID."
+# Re-Connect to the Satellite server
+
+# First unregister with the Satellite server
+subscription-manager clean
+
+#
+# Enable the network 
+#
+# Register with the Satellite server
+#Use this if the key stops working. -- subscription-manager register --auto-attach 
+set -o pipefail && curl -sS  yourSATKEYURL | bash
+else
+echo "You chose NOT to rejoin to the satellite server"
+fi
+
+
 #
 # register a RHEL5 or 6 client to the RHN Satellite server in the traditional manner
 #
