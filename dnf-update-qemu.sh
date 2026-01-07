@@ -3,7 +3,7 @@
 # Then emails the Admins the status of the updates
 # Then reboots the server in that order
 
-# Script written by Jeremi Albrizio on Feb 5th.
+# Script written by Jeremi Albrizio on Feb 5th 2013.
 
 # This is where we make sure it only runs on the second sunday 
 # since cron can only be scheduled to run every sunday.
