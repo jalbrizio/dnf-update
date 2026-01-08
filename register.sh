@@ -91,22 +91,25 @@ fi
 #cp -p /etc/sysconfig/rhn/up2date /etc/sysconfig/rhn/up2date-last$$
 
 #
-# Install the satellite SSL certs and the latest katello directly from the Satellite server...
+# Install the satellite SSL certs and the remove katello directly from the Satellite server... sattelite is depricated for forman which used katello, satellite uses subscribtion manager pick the one you use
+#rpm -ivh http://$yourspacewalkserver/pub/spacewalk-client-repo-2.2-1.el6.noarch.rpm # depricated
+#rpm -ivh http://$yourspacewalkserver2/pub/rhn-org-trusted-ssl-cert-$VER-$REL.noarch.rpm # depricated
+
 rpm -ivh http://$yourformanserver/pub/rhn-org-trusted-ssl-cert-$VER-$REL.noarch.rpm
-rpm -ivh http://$yourformanserver/pub/katello-ca-consumer-latest.noarch.rpm
+## rpm -ivh http://$yourformanserver/pub/katello-ca-consumer-latest.noarch.rpm
+## dnf -y remove katello-ca-consumer*
+rpm -e rhn-org-trusted-ssl-cert
 
-#rpm -ivh http://$yourspacewalkserver/pub/spacewalk-client-repo-2.2-1.el6.noarch.rpm
-#rpm -e rhn-org-trusted-ssl-cert
-#rpm -ivh http://$yourformanserver2/pub/rhn-org-trusted-ssl-cert-$VER-$REL.noarch.rpm
-##wget http://yourformanserver2/pub/RPM-GPG-KEY-MariaDB -O /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
-#rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
-#rpm --import http://$yourformanserver/pub/RPM-GPG-KEY-MariaDB
-#rpm --import http://$yourformanserver/pub/RPM-GPG-KEY-EPEL-6
-#rpm --import http://$yourformanserver/pub/RPM-GPG-KEY-mccdrpm
-#rpm --import http://$yourformanserver/pub/RPM-GPG-KEY-percona
+## chose the keys that you will use and update them on your satellite or forman server then update the below to match
+wget http://yourformanserver2/pub/RPM-GPG-KEY-MariaDB -O /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
+rpm --import http://$yourformanserver/pub/RPM-GPG-KEY-MariaDB
+rpm --import http://$yourformanserver/pub/RPM-GPG-KEY-EPEL-6
+rpm --import http://$yourformanserver/pub/RPM-GPG-KEY-mccdrpm
+rpm --import http://$yourformanserver/pub/RPM-GPG-KEY-percona
 
-# edit the Red Hat target in /etc/sysconfig/rhn/up2date to point to
-# the Satellite URL, then run  rhn_register  as usual.
+
+# up2date and rhn_register are depricated those sections are commented out.
 #sed -i 's/https:\/\/xmlrpc.rhn.redhat.com/https:\/\/$youroldsateliteserver/' /etc/sysconfig/rhn/up2date
 #sed -i 's/https:\/\/$youroldsateliteserver/https:\/\/$yourformanserver2/' /etc/sysconfig/rhn/up2date
 #sed -i 's/RHNS-CA-CERT/RHN-ORG-TRUSTED-SSL-CERT/' /etc/sysconfig/rhn/up2date
