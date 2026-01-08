@@ -8,23 +8,30 @@ yourspacewalkserver2=yourserver2.com
 youroldsateliteserver=youroldserver.com
 VER=1.0
 REL=1
+HELP_FLAG=0
+
+usage() {
+    echo "Usage: $0 [-d <domain>|--domain <domain>] [-h <hostname>|--hostname <hostname>] [-k|--sshkeys] [-j|--joinsat] [-h|--help]"
+    echo "Example: $0 -h myservername -d domain.com -k -j"
+    exit 1
+}
 
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
         -d | --domain)
             if [ -n "$2" ] && [ "$2" != "--"* ] && [ "$2" != "-"* ]; then
                 DOMAIN1="$2"
-                DN=Y
+                NEWDN=Y
                 shift 2 # Shift past the option and its argument
             else
                 echo "Error: Option $1 requires an argument."
                 usage
             fi
             ;;
-        -h | --hostname)
+        -n | --hostname)
             if [ -n "$2" ] && [ "$2" != "--"* ] && [ "$2" != "-"* ]; then
                 HOSTNAME1="$2"
-                HN=Y
+                NEWHN=Y
                 shift 2 # Shift past the option and its argument
             else
                 echo "Error: Option $1 requires an argument."
@@ -39,12 +46,20 @@ while [[ "$#" -gt 0 ]]; do
             NEWSAT=Y
             shift
             ;;
+         -h | --help)
+            HELP_FLAG=1
+            shift
+            ;;
         *)
             echo "Error: Unknown option $1"
             usage
             ;;
     esac
 done
+
+if [ "$HELP_FLAG" -eq 1 ]; then
+    usage
+fi
 
 NEWHN=$(echo "$NEWHN" | tr '[:upper:]' '[:lower:]')
 NEWDN=$(echo "$NEWDN" | tr '[:upper:]' '[:lower:]')
@@ -73,26 +88,26 @@ fi
 # register a RHEL5 or 6 client to the RHN Satellite server in the traditional manner
 #
 # this will overwrite the existing /etc/sysconfig/rhn/up2date, so...
-cp -p /etc/sysconfig/rhn/up2date /etc/sysconfig/rhn/up2date-last$$
+#cp -p /etc/sysconfig/rhn/up2date /etc/sysconfig/rhn/up2date-last$$
 
 #
 # REQUIRED: install the satellite SSL cert directly from the Satellite server...
-rpm -ivh http://$yourspacewalkserver/pub/rhn-org-trusted-ssl-cert-$VER-$REL.noarch.rpm
-rpm -ivh http://$yourspacewalkserver/pub/spacewalk-client-repo-2.2-1.el6.noarch.rpm
-rpm -e rhn-org-trusted-ssl-cert
-rpm -ivh http://$yourspacewalkserver2/pub/rhn-org-trusted-ssl-cert-$VER-$REL.noarch.rpm
-#wget http://ncc-1701-sw/pub/RPM-GPG-KEY-MariaDB -O /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
+#rpm -ivh http://$yourspacewalkserver/pub/rhn-org-trusted-ssl-cert-$VER-$REL.noarch.rpm
+#rpm -ivh http://$yourspacewalkserver/pub/spacewalk-client-repo-2.2-1.el6.noarch.rpm
+#rpm -e rhn-org-trusted-ssl-cert
+#rpm -ivh http://$yourspacewalkserver2/pub/rhn-org-trusted-ssl-cert-$VER-$REL.noarch.rpm
+##wget http://ncc-1701-sw/pub/RPM-GPG-KEY-MariaDB -O /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
 #rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB
-rpm --import http://$yourspacewalkserver/pub/RPM-GPG-KEY-MariaDB
-rpm --import http://$yourspacewalkserver/pub/RPM-GPG-KEY-EPEL-6
-rpm --import http://$yourspacewalkserver/pub/RPM-GPG-KEY-mccdrpm
-rpm --import http://$yourspacewalkserver/pub/RPM-GPG-KEY-percona
+#rpm --import http://$yourspacewalkserver/pub/RPM-GPG-KEY-MariaDB
+#rpm --import http://$yourspacewalkserver/pub/RPM-GPG-KEY-EPEL-6
+#rpm --import http://$yourspacewalkserver/pub/RPM-GPG-KEY-mccdrpm
+#rpm --import http://$yourspacewalkserver/pub/RPM-GPG-KEY-percona
 
 # edit the Red Hat target in /etc/sysconfig/rhn/up2date to point to
 # the Satellite URL, then run  rhn_register  as usual.
-sed -i 's/https:\/\/xmlrpc.rhn.redhat.com/https:\/\/$youroldsateliteserver/' /etc/sysconfig/rhn/up2date
-sed -i 's/https:\/\/$youroldsateliteserver/https:\/\/$yourspacewalkserver2/' /etc/sysconfig/rhn/up2date
-sed -i 's/RHNS-CA-CERT/RHN-ORG-TRUSTED-SSL-CERT/' /etc/sysconfig/rhn/up2date
+#sed -i 's/https:\/\/xmlrpc.rhn.redhat.com/https:\/\/$youroldsateliteserver/' /etc/sysconfig/rhn/up2date
+#sed -i 's/https:\/\/$youroldsateliteserver/https:\/\/$yourspacewalkserver2/' /etc/sysconfig/rhn/up2date
+#sed -i 's/RHNS-CA-CERT/RHN-ORG-TRUSTED-SSL-CERT/' /etc/sysconfig/rhn/up2date
 
 #REJOINTSAT
 
