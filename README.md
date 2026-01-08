@@ -1,5 +1,5 @@
 
-#scripts
+# Scripts
 ```
 
 register.sh # Register new servers
@@ -7,7 +7,7 @@ dnf-update-server.sh # Generic update script
 dnf-update-mysql.sh # Update script for servers with mysql and mariadb
 dnf-update-qemu.sh # Update script for servers with qemu
 dnf-update.sh # update wrapper script for custom dates like the second sunday or second wednesday.
-update-vmware.sh Update script for servers with vmware tools -- compiles vmware tools. ** Requires a vmware tools git repo. 
+update-vmware.sh Update script for servers with vmware tools--compiles vmwaretools.* Requires a vmware tools git repo. 
 ```
 # register.sh Usage
  ```
