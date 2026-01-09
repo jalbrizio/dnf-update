@@ -38,11 +38,20 @@ systemctl restart firewalld
 # cd /usr/local/src/dnf-update/galera
 # semodule -i /usr/local/src/dnf-update/galera/galera.pp
 
+# Comment out the next line if using a galera cluster and uncomment the above lines.
+systemctl start mariadb
+# use the ~/.my.cnf file for credentials which is only readable by root
+
+#upgrade the database
 mysql_upgrade -u root -pexamplePass --force
+
+# Restart the database services sometimes services get stuck so this should force a service restart for when that happens.
 systemctl stop mariadb
-sleep 6
+sleep 3
 killall -9 mariadbd
 systemctl start mariadb
+
+# Run the database upgrade again for some reason this needs to happen twice every once and a while.
 mysql_upgrade
 
 reboot
