@@ -32,14 +32,18 @@ cat /var/log/dnf-update.log | mail -s "dnf update log for `date`" exampleemail@y
 systemctl enable firewalld
 systemctl restart firewalld
 
-systemctl start mysql --wsrep-cluster-address=gcomm://
-mysql_upgrade -u root -pexamplePass --force
-cd /usr/local/src/dnf-update/galera
-semodule -i /usr/local/src/dnf-update/galera/galera.pp
+# Database updates that need to be done every time patching is done
+# Uncomment the below if you are using a mariadb galera cluster
+# systemctl start mariadb --wsrep-cluster-address=gcomm://
+# cd /usr/local/src/dnf-update/galera
+# semodule -i /usr/local/src/dnf-update/galera/galera.pp
 
-systemctl stop mysql
-killall -9 mysqld
-systemctl start mysql
+mysql_upgrade -u root -pexamplePass --force
+systemctl stop mariadb
+sleep 6
+killall -9 mariadbd
+systemctl start mariadb
+mysql_upgrade
 
 reboot
 
