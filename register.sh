@@ -38,8 +38,18 @@ while [[ "$#" -gt 0 ]]; do
                 usage
             fi
             ;;
+        -N | --fqdn)
+            if [ -n "$2" ] && [ "$2" != "--"* ] && [ "$2" != "-"* ]; then
+                FQDN1="$2"
+                NEWFQDN=Y
+                shift 2 # Shift past the option and its argument
+            else
+                echo "Error: Option $1 requires an argument."
+                usage
+            fi
+            ;;
         -k | --sshkeys)
-            NEWSSH=Y
+            NEWSSHK=Y
             shift
             ;;
         -j | --joinsat)
@@ -72,8 +82,9 @@ echo "You chose NOT to set the hostname."
 fi
 
 #SSHKEYS
-NEWSSH=$(echo "$NEWSSH" | tr '[:upper:]' '[:lower:]')
-if [[ "$NEWSSH" == "yes" ]] || [[ "$NEWSSH" == "y" ]]; then
+# Info on this here in case you run into issues -- https://serverfault.com/questions/1116547/why-the-rhel8-system-do-not-generate-ssh-host-keys-automatically-when-missing
+NEWSSHK=$(echo "$NEWSSHK" | tr '[:upper:]' '[:lower:]')
+if [[ "$NEWSSHK" == "yes" ]] || [[ "$NEWSSHK" == "y" ]]; then
 echo "You chose to regenerate the servers ssh keys"
 # remove the /etc/ssh/ssh_host_* files and restart the sshd server. This generated new sshd keys for the host so it doesn't use the keys from the image.
 echo "Generating new ssh host keys."
